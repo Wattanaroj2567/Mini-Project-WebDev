@@ -1,0 +1,17 @@
+# Core Django Framework
+django
+
+# For Google OAuth & Enhanced Authentication
+django-allauth
+requests  # Dependency for django-allauth Google provider
+PyJWT     # Dependency for token handling in allauth
+cryptography # Dependency for PyJWT
+
+# For managing environment variables (.env file)
+python-dotenv
+
+# For Tailwind CSS integration
+django-tailwind
+
+# For automatic browser reloading
+django-browser-reload

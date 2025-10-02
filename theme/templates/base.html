@@ -1,0 +1,64 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light"> {# เพิ่ม data-theme สำหรับ daisyUI #}
+
+<head>
+    <title>EventRegis+</title> {# เปลี่ยน Title #}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+</head>
+
+<body class="bg-base-200">
+
+    {# --- Navbar (เมนู) --- #}
+    <div class="navbar bg-base-100 shadow-lg">
+        <div class="flex-1">
+            <a href="/" class="btn btn-ghost text-xl">EventRegis+</a>
+        </div>
+        <div class="flex-none">
+            <ul class="menu menu-horizontal px-1">
+                {% if user.is_authenticated %}
+                <li><a>สวัสดี, {{ user.username }}</a></li>
+                <li><a href="{% url 'events:my_registrations' %}">กิจกรรมของฉัน</a></li>
+                <li><a href="{% url 'events:my_organized_events' %}">จัดการกิจกรรม</a></li>
+                <li>
+                    <form method="post" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">ออกจากระบบ</button>
+                    </form>
+                </li>
+                {% else %}
+                <li><a href="{% url 'account_login' %}">เข้าสู่ระบบ</a></li>
+                <li><a href="{% url 'account_signup' %}">สมัครสมาชิก</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    {# --- ส่วนแสดงข้อความแจ้งเตือน --- #}
+    {% if messages %}
+    <div class="toast toast-top toast-end">
+        {% for message in messages %}
+        <div class="alert 
+                    {% if message.tags == 'success' %}alert-success{% endif %}
+                    {% if message.tags == 'info' %}alert-info{% endif %}
+                    {% if message.tags == 'warning' %}alert-warning{% endif %}
+                    {% if message.tags == 'error' %}alert-error{% endif %}
+                ">
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# --- นี่คือ "ช่อง" สำหรับให้ไฟล์ลูกนำเนื้อหามาใส่ --- #}
+    <main class="container mx-auto py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+
+</html>

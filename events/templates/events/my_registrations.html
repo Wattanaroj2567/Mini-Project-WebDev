@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">กิจกรรมที่ฉันลงทะเบียน</h1>
+
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th>ชื่อกิจกรรม</th>
+                    <th>วันที่</th>
+                    <th>สถานที่</th>
+                    <th>สถานะ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registration in registrations %}
+                <tr>
+                    <td>
+                        <a href="{{ registration.event.get_absolute_url }}" class="link link-hover">{{
+                            registration.event.title }}</a>
+                    </td>
+                    <td>{{ registration.event.start_datetime|date:"d M Y, H:i" }}</td>
+                    <td>{{ registration.event.location }}</td>
+                    <td><span class="badge badge-success">{{ registration.status }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">คุณยังไม่ได้ลงทะเบียนกิจกรรมใดๆ</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

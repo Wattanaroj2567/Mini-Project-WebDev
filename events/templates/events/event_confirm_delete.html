@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl text-center">
+    <h1 class="text-2xl font-bold mb-4">ยืนยันการลบ</h1>
+    <p class="mb-6">คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรม "{{ object.title }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex justify-center gap-4">
+            <button type="submit" class="btn btn-error">ใช่, ลบเลย</button>
+            <a href="{{ object.get_absolute_url }}" class="btn">ยกเลิก</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

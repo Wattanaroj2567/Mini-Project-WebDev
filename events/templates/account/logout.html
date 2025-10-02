@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-20 p-8 bg-base-100 rounded-lg shadow-xl text-center">
+    <h1 class="text-2xl font-bold mb-4">ออกจากระบบ</h1>
+
+    <p class="mb-6">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?</p>
+
+    <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <div class="flex justify-center gap-4">
+            <button type="submit" class="btn btn-error">ใช่, ออกจากระบบ</button>
+            <a href="/" class="btn">ยกเลิก</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

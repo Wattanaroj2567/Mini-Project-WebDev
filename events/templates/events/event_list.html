@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">กิจกรรมทั้งหมด</h1>
+        {% if user.is_authenticated %}
+        <a href="{% url 'events:event_create' %}" class="btn btn-primary">สร้างกิจกรรมใหม่</a>
+        {% endif %}
+    </div>
+
+    <!-- Grid for event cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for event in events %}
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">{{ event.title }}</h2>
+                <p>{{ event.description|truncatewords:20 }}</p>
+                <p><span class="font-bold">วันที่:</span> {{ event.start_datetime|date:"d M Y, H:i" }}</p>
+                <p><span class="font-bold">สถานที่:</span> {{ event.location }}</p>
+                <div class="card-actions justify-end">
+                    <a href="{{ event.get_absolute_url }}" class="btn btn-secondary">ดูรายละเอียด</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="col-span-full text-center text-gray-500">ยังไม่มีกิจกรรมในขณะนี้</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

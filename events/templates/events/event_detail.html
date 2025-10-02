@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="card lg:card-side bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h1 class="card-title text-4xl font-bold">{{ event.title }}</h1>
+            <p class="mt-4 text-lg">{{ event.description }}</p>
+
+            <div class="mt-6 space-y-2">
+                <p><strong>ผู้จัด:</strong> {{ event.organizer.username }}</p>
+                <p><strong>วันที่และเวลา:</strong> {{ event.start_datetime|date:"d M Y, H:i" }}</p>
+                <p><strong>สถานที่:</strong> {{ event.location }}</p>
+                <p><strong>รับสมัครสูงสุด:</strong> {{ event.max_participants }} คน</p>
+            </div>
+
+            <div class="card-actions justify-end mt-8">
+                {% if user.is_authenticated %}
+                {% if user == event.organizer %}
+                <!-- ถ้าเป็นเจ้าของกิจกรรม -->
+                <a href="{% url 'events:event_update' event.pk %}" class="btn btn-warning">แก้ไขกิจกรรม</a>
+                <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-error">ลบกิจกรรม</a>
+                {% else %}
+                <!-- ถ้าเป็นผู้ใช้ทั่วไป -->
+                {% if is_registered %}
+                <a href="{% url 'events:event_unregister' event.pk %}"
+                    class="btn btn-outline btn-error">ยกเลิกการลงทะเบียน</a>
+                {% else %}
+                <a href="{% url 'events:event_register' event.pk %}" class="btn btn-primary">ลงทะเบียนเลย</a>
+                {% endif %}
+                {% endif %}
+                {% else %}
+                <!-- ถ้ายังไม่ล็อกอิน -->
+                <a href="{% url 'account_login' %}" class="btn btn-primary">เข้าสู่ระบบเพื่อลงทะเบียน</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
