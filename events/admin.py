@@ -4,8 +4,8 @@ from .models import Event, Registration
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('title', 'organizer', 'start_datetime',
-                    'location', 'max_participants')
-    list_filter = ('start_datetime', 'organizer')
+                    'location', 'max_participants', 'category')
+    list_filter = ('start_datetime', 'organizer', 'category')
     search_fields = ('title', 'description', 'location')
 
 

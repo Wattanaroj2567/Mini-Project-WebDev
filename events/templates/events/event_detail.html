@@ -1,191 +1,171 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}| EventRegis+{% endblock %}  
+{% block title %}{{ event.title }} | EventRegis+{% endblock %}
 
 {% block content %}
-<style>
-  #content-wrapper {
-    background-color: #F1F0E8;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  
-  .detail-container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .detail-card {
-    background: white;
-    border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .event-title {
-    color: #2C3E50;
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-  }
-  
-  .event-description {
-    color: #5a6c7d;
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 2rem;
-    white-space: pre-wrap;
-  }
-  
-  .info-section {
-    margin-bottom: 2.5rem;
-  }
-  
-  .info-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    color: #2C3E50;
-  }
-  
-  .info-label {
-    font-weight: 600;
-    min-width: 120px;
-  }
-  
-  .info-value {
-    color: #5a6c7d;
-  }
-  
-  .action-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-  }
-  
-  .detail-card .btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-block;
-  }
-  
-  .detail-card .btn-edit {
-    background: #FFC107;
-    color: #2C3E50;
-  }
-  
-  .detail-card .btn-edit:hover {
-    background: #FFB300;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-  }
-  
-  .detail-card .btn-delete {
-    background: #E91E63;
-    color: white;
-  }
-  
-  .detail-card .btn-delete:hover {
-    background: #C2185B;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
-  }
-  
-  @media (max-width: 640px) {
-    .detail-card {
-      padding: 1.5rem;
-    }
-    
-    .event-title {
-      font-size: 1.5rem;
-    }
-    
-    .action-buttons {
-      flex-direction: column;
-    }
-    
-    .detail-card .btn {
-      width: 100%;
-      text-align: center;
-    }
-  }
-</style>
+<div class="min-h-screen p-8 bg-[#F1F0E8]" x-data="{ showDeleteModal: false }"
+  @keydown.escape.window="showDeleteModal = false">
+  <div class="max-w-4xl mx-auto">
+    <div class="card bg-white shadow-lg rounded-2xl">
+      <div class="card-body p-10 space-y-8">
+        <div>
+          <span class="badge badge-lg border-none bg-[#B3C8CF] text-[#2C3E50]">
+            {{ event.get_category_display }}
+          </span>
+          <h1 class="text-3xl md:text-4xl font-bold mt-4 text-[#2C3E50]">{{ event.title }}</h1>
+        </div>
 
-<div id="content-wrapper">
-  <div class="detail-container">
-    <div class="detail-card">
-      <h1 class="event-title">{{ event.title }}</h1>
-      
-      <p class="event-description">{{ event.description }}</p>
-      
-      <div class="info-section">
-        <div class="info-item">
-          <span class="info-label">ผู้จัด:</span>
-          <span class="info-value">{{ event.organizer }}</span>
+        <div class="prose prose-lg text-[#5a6c7d]">
+          <p class="whitespace-pre-wrap">{{ event.description }}</p>
         </div>
-        
-        <div class="info-item">
-          <span class="info-label">วันที่และเวลา:</span>
-          <span class="info-value">{{ event.start_datetime|date:"d M Y, H:i" }}</span>
+
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">👤</span>
+            <div>
+              <dt class="font-semibold text-[#2C3E50]">ผู้จัด</dt>
+              <dd class="text-[#5a6c7d]">{{ event.organizer }}</dd>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">📅</span>
+            <div>
+              <dt class="font-semibold text-[#2C3E50]">วันที่และเวลา</dt>
+              <dd class="text-[#5a6c7d]">{{ event.start_datetime|date:"d/m/Y, H:i" }}</dd>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">📍</span>
+            <div>
+              <dt class="font-semibold text-[#2C3E50]">สถานที่</dt>
+              <dd class="text-[#5a6c7d]">{{ event.location }}</dd>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">🎟️</span>
+            <div>
+              <dt class="font-semibold text-[#2C3E50]">จำนวนผู้สมัคร</dt>
+              <dd class="text-[#5a6c7d]">
+                {{ confirmed_count }} / {{ event.max_participants }} คน
+                {% if remaining_slots > 0 %}
+                <span class="badge badge-sm ml-2 border-none bg-[#E5E1DA] text-[#2C3E50]">เหลือ {{ remaining_slots }}
+                  ที่นั่ง</span>
+                {% else %}
+                <span class="badge badge-sm ml-2 badge-error text-white">เต็มแล้ว</span>
+                {% endif %}
+              </dd>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">👥</span>
+            <div>
+              <dt class="font-semibold text-[#2C3E50]">เพศที่อนุญาตให้เข้าร่วม</dt>
+              <dd class="text-[#5a6c7d]">
+                <div class="flex items-center gap-2">
+                  {% if event.allow_male and event.allow_female %}
+                  <span class="badge badge-sm border-none bg-[#B3C8CF] text-[#2C3E50]">ชายและหญิง</span>
+                  {% elif event.allow_male %}
+                  <span class="badge badge-sm border-none bg-[#89A8B2] text-[#F1F0E8]">เฉพาะชาย</span>
+                  {% elif event.allow_female %}
+                  <span class="badge badge-sm border-none bg-[#E5E1DA] text-[#2C3E50]">เฉพาะหญิง</span>
+                  {% else %}
+                  <span class="badge badge-sm badge-error text-white">ยังไม่เปิดรับผู้เข้าร่วม</span>
+                  {% endif %}
+                </div>
+              </dd>
+            </div>
+          </div>
+        </dl>
+
+        <div class="border-t border-gray-100 pt-6">
+          {% if user == event.organizer %}
+          <div class="flex flex-col sm:flex-row gap-4 justify-end">
+            <a href="{% url 'events:event_update' event.id %}"
+              class="btn btn-warning text-gray-800 hover:bg-yellow-500 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+              แก้ไขกิจกรรม
+            </a>
+            <button type="button"
+              class="btn btn-error text-white hover:bg-pink-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+              @click="showDeleteModal = true">
+              ลบกิจกรรม
+            </button>
+          </div>
+          {% else %}
+          {% if not user.is_authenticated %}
+          <div class="alert alert-info flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <span>เข้าสู่ระบบเพื่อทำการลงทะเบียนเข้าร่วมกิจกรรมนี้</span>
+            <div class="flex gap-2">
+              <a href="{% url 'account_login' %}" class="btn btn-sm btn-primary">เข้าสู่ระบบ</a>
+              <a href="{% url 'account_signup' %}" class="btn btn-sm btn-outline">สมัครสมาชิก</a>
+            </div>
+          </div>
+          {% else %}
+          {% if is_registered %}
+          <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+            <div class="grow p-4 rounded-lg bg-[#E5E1DA] text-[#2C3E50]">
+              คุณได้ลงทะเบียนกิจกรรมนี้แล้ว (สถานะ: {{ registration_status_display }})
+            </div>
+            <form method="post" action="{% url 'events:event_unregister' event.pk %}" class="flex-1">
+              {% csrf_token %}
+              <button type="submit"
+                class="btn btn-error w-full text-white hover:bg-pink-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+                ยกเลิกการลงทะเบียน
+              </button>
+            </form>
+          </div>
+          {% else %}
+          <form method="post" action="{% url 'events:event_register' event.pk %}"
+            class="flex flex-col sm:flex-row gap-4 items-stretch">
+            {% csrf_token %}
+            <button type="submit"
+              class="btn btn-primary flex-1 text-white text-lg font-semibold hover:bg-indigo-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg {% if is_full %}btn-disabled{% endif %}"
+              {% if is_full %}disabled{% endif %}>
+              {% if is_full %}กิจกรรมเต็มแล้ว{% else %}ลงทะเบียนเข้าร่วม{% endif %}
+            </button>
+          </form>
+          {% if registration_status == 'Cancelled' %}
+          <p class="text-sm text-gray-600 mt-2">คุณเคยยกเลิกการลงทะเบียนไปก่อนหน้านี้
+            หากที่นั่งยังว่างสามารถลงทะเบียนได้อีกครั้ง</p>
+          {% endif %}
+          {% endif %}
+          {% endif %}
+          {% endif %}
         </div>
-        
-        <div class="info-item">
-          <span class="info-label">สถานที่:</span>
-          <span class="info-value">{{ event.location }}</span>
-        </div>
-        
-        <div class="info-item">
-          <span class="info-label">จำนวนผู้สมัคร:</span>
-          <span class="info-value">{{ event.current_participants }} คน</span>
+
+        <div x-show="showDeleteModal" x-cloak x-transition.opacity.duration.300ms @click.self="showDeleteModal = false"
+          class="fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 backdrop-blur-sm"
+          style="display: none;">
+          <div x-show="showDeleteModal" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90"
+            class="relative m-4 p-6 w-11/12 sm:w-2/5 min-w-[40%] max-w-[500px] rounded-lg bg-white shadow-xl"
+            @click.stop>
+            <div class="flex shrink-0 items-center pb-4 text-xl font-semibold text-slate-800">
+              ⚠️ ยืนยันการลบกิจกรรม
+            </div>
+
+            <div class="relative border-t border-slate-200 py-4 leading-normal text-slate-600">
+              คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรม
+              <span class="font-semibold text-slate-800">"{{ event.title }}"</span>?
+              <br><br>
+            </div>
+
+            <div class="flex shrink-0 flex-wrap items-center pt-4 justify-end gap-2">
+              <button @click="showDeleteModal = false" class="btn btn-ghost" type="button">
+                ยกเลิก
+              </button>
+              <form method="post" action="{% url 'events:event_delete' event.id %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-error">
+                  ใช่, ลบเลย
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-      
-      {% if user == event.organizer %}
-      <div class="action-buttons">
-        <a href="{% url 'events:event_update' event.id %}" class="btn btn-edit">แก้ไขกิจกรรม</a>
-        <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-delete">ลบกิจกรรม</a>
-      </div>
-      {% endif %}
     </div>
   </div>
-</div>
-<div class="event-card">
-    <h2>{{ event.title }}</h2>
-    <p>{{ event.description }}</p>
-    <p><strong>ผู้จัด:</strong> {{ event.organizer.username }}</p>
-    <p><strong>วันที่:</strong> {{ event.date|date:"d M Y, H:i" }}</p>
-    <p><strong>สถานที่:</strong> {{ event.location }}</p>
-    <p><strong>จำนวนผู้เข้าร่วม:</strong> 
-        {{ event.registrations.count }} / {{ event.max_participants }} คน
-    </p>
-
-    {% if user.is_authenticated %}
-        {% if is_registered %}
-            <!-- ปุ่มยกเลิกการลงทะเบียน -->
-            <form method="post" action="{% url 'events:event_unregister' event.pk %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">ยกเลิกการเข้าร่วม</button>
-            </form>
-        {% else %}
-            <!-- ปุ่มลงทะเบียน -->
-            {% if event.registrations.count < event.max_participants %}
-                <form method="post" action="{% url 'events:event_register' event.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">เข้าร่วมกิจกรรม</button>
-                </form>
-            {% else %}
-                <p class="text-danger">กิจกรรมเต็มแล้ว</p>
-            {% endif %}
-        {% endif %}
-    {% else %}
-        <p><a href="{% url 'login' %}">เข้าสู่ระบบ</a> เพื่อเข้าร่วมกิจกรรม</p>
-    {% endif %}
 </div>
 {% endblock %}

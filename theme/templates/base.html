@@ -1,72 +1,82 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="th" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}EventRegis+{% endblock %}</title>
-    {% tailwind_css %}
-  </head>
 
-  <body class="bg-cream-light min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <nav class="navbar shadow-lg" style="background-color: #89A8B2; color: #F1F0E8;">
-  <div class="container mx-auto flex items-center justify-between">
-        <div class="navbar-start">
-          <a href="/" class="btn btn-ghost text-xl" style="color: #F1F0E8;">
-            <span class="text-2xl mr-2"></span>
-            EventRegis+
-          </a>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}EventRegis+{% endblock %}</title>
+  {% tailwind_css %}
+</head>
 
-        <div class="navbar-end">
-          <ul class="menu menu-horizontal gap-2 items-center">
-            {% if user.is_authenticated %}
-              <li><span class="px-2" style="color: #F1F0E8;">สวัสดี, {{ user.username }}</span></li>
-              <li><a href="{% url 'events:my_registrations' %}" class="btn btn-outline btn-sm" style="border-color: #F1F0E8; color: #F1F0E8;">กิจกรรมของฉัน</a></li>
-              <li><a href="{% url 'events:my_organized_events' %}" class="btn btn-outline btn-sm" style="border-color: #F1F0E8; color: #F1F0E8;">จัดการกิจกรรม</a></li>
-              <li>
-                <form method="post" action="{% url 'account_logout' %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm" style="background-color: #B3C8CF; color: #89A8B2;">ออกจากระบบ</button>
-                </form>
-              </li>
-            {% else %}
-              <li><a href="{% url 'account_login' %}" class="btn btn-outline btn-sm" style="border-color: #F1F0E8; color: #F1F0E8;">เข้าสู่ระบบ</a></li>
-              <li><a href="{% url 'account_signup' %}" class="btn btn-outline btn-sm" style="border-color: #F1F0E8; color: #F1F0E8;">สมัครสมาชิก</a></li>
-            {% endif %}
-          </ul>
-        </div>
+<body class="bg-cream-light min-h-screen flex flex-col" x-data>
+  <!-- Navbar -->
+  <nav class="navbar shadow-lg" style="background-color: #89A8B2; color: #F1F0E8;">
+    <div class="container mx-auto flex items-center justify-between">
+      <div class="navbar-start">
+        <a href="/" class="btn btn-ghost text-xl" style="color: #F1F0E8;">
+          <span class="text-2xl mr-2"></span>
+          EventRegis+
+        </a>
       </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" style="background-color: #F1F0E8;">
-      <div class="hero-content container mx-auto py-6 px-4">
-        {% block hero %}{% endblock %}
+      <div class="navbar-end">
+        <ul class="menu menu-horizontal gap-2 items-center">
+          {% if user.is_authenticated %}
+          <li><span class="px-2" style="color: #F1F0E8;">สวัสดี, {{ user.username }}</span></li>
+          <li><a href="{% url 'events:my_registrations' %}" class="btn btn-outline btn-sm"
+              style="border-color: #F1F0E8; color: #F1F0E8;">กิจกรรมของฉัน</a></li>
+          <li><a href="{% url 'events:my_organized_events' %}" class="btn btn-outline btn-sm"
+              style="border-color: #F1F0E8; color: #F1F0E8;">จัดการกิจกรรม</a></li>
+          <li>
+            <form method="post" action="{% url 'account_logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm"
+                style="background-color: #B3C8CF; color: #89A8B2;">ออกจากระบบ</button>
+            </form>
+          </li>
+          {% else %}
+          <li><a href="{% url 'account_login' %}" class="btn btn-outline btn-sm"
+              style="border-color: #F1F0E8; color: #F1F0E8;">เข้าสู่ระบบ</a></li>
+          <li><a href="{% url 'account_signup' %}" class="btn btn-outline btn-sm"
+              style="border-color: #F1F0E8; color: #F1F0E8;">สมัครสมาชิก</a></li>
+          {% endif %}
+        </ul>
       </div>
-    </section>
-
-    <!-- Messages -->
-    {% if messages %}
-    <div class="container mx-auto px-4 mt-4 space-y-2">
-      {% for message in messages %}
-        {% if message.tags == 'success' %}
-          <div class="alert alert-success"><span>{{ message }}</span></div>
-        {% elif message.tags == 'error' %}
-          <div class="alert alert-error"><span>{{ message }}</span></div>
-        {% elif message.tags == 'warning' %}
-          <div class="alert alert-warning"><span>{{ message }}</span></div>
-        {% else %}
-          <div class="alert alert-info"><span>{{ message }}</span></div>
-        {% endif %}
-      {% endfor %}
     </div>
-    {% endif %}
+  </nav>
 
-    <!-- Main -->
-    <main class="flex-1 container mx-auto px-4 py-8">
-      {% block content %}{% endblock %}
-    </main>
-  </body>
+  <!-- Hero Section -->
+  <section class="hero" style="background-color: #F1F0E8;">
+    <div class="hero-content container mx-auto py-6 px-4">
+      {% block hero %}{% endblock %}
+    </div>
+  </section>
+
+  <!-- Messages -->
+  {% if messages %}
+  <div class="container mx-auto px-4 mt-4 space-y-2">
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div class="alert alert-success"><span>{{ message }}</span></div>
+    {% elif message.tags == 'error' %}
+    <div class="alert alert-error"><span>{{ message }}</span></div>
+    {% elif message.tags == 'warning' %}
+    <div class="alert alert-warning"><span>{{ message }}</span></div>
+    {% else %}
+    <div class="alert alert-info"><span>{{ message }}</span></div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Main -->
+  <main class="flex-1 container mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- AlpineJS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+
 </html>

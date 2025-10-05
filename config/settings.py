@@ -12,22 +12,19 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+SECRET_KEY = 'django-insecure-bu(n+=sj!3tbqetak96*f_tvu_i40bd7j#_vjcy3%=d1@g&an1'
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -96,6 +93,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'events.context_processors.social_login_providers',
             ],
         },
     },
@@ -173,4 +171,10 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 # ถ้าใช้ django-allauth
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # เปลี่ยนจาก 'mandatory' เป็น 'none'
+# ACCOUNT_EMAIL_VERIFICATION = 'none'  # เปลี่ยนจาก 'mandatory' เป็น 'none'
+
+# ตั้งค่า NPM_BIN_PATH สำหรับการใช้งาน Tailwind CSS
+NPM_BIN_PATH = r"C:\nvm4w\nodejs\npm.cmd"
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_AUTO_SIGNUP = True

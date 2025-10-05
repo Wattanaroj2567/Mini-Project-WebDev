@@ -9,7 +9,8 @@
       <p class="opacity-90">สำรวจและลงทะเบียนกิจกรรมที่คุณสนใจ</p>
       {% if user.is_authenticated %}
       <div class="card-actions justify-end">
-        <a href="{% url 'events:event_create' %}" class="btn" style="background-color: #B3C8CF; color: #89A8B2;">
+        <a href="{% url 'events:event_create' %}" class="btn btn-sm md:btn-md"
+          style="background-color: #B3C8CF; color: #89A8B2;">
           + สร้างกิจกรรมใหม่
         </a>
       </div>
@@ -20,36 +21,57 @@
 {% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" x-data="{ hoveredCard: null }">
   {% for event in events %}
-    <article class="card shadow hover:shadow-lg transition" style="background-color: #F1F0E8;">
-      <div class="card-body">
-        <h2 class="card-title" style="color: #89A8B2;">{{ event.title }}</h2>
-        <p style="color: #89A8B2;">
-          {{ event.description|truncatewords:25 }}
-        </p>
-        <div class="mt-2 grid gap-2" style="color: #89A8B2;">
-          <div class="flex items-center gap-2">
-            <span class="badge" style="background-color: #B3C8CF; color: #89A8B2;">วันที่</span>
-            <span>{{ event.start_datetime|date:"d M Y, H:i" }}</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="badge" style="background-color: #E5E1DA; color: #89A8B2;">สถานที่</span>
-            <span>{{ event.location }}</span>
-          </div>
+  <article class="card shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+    style="background-color: #F1F0E8;" @mouseenter="hoveredCard = {{ event.id }}" @mouseleave="hoveredCard = null">
+    <div class="card-body p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="card-title text-lg md:text-xl" style="color: #2C3E50;">{{ event.title }}</h2>
+        <span class="badge" style="background-color: #B3C8CF; color: #2C3E50;">{{ event.get_category_display }}</span>
+      </div>
+      <p class="text-sm line-clamp-3" style="color: #5a6c7d;">
+        {{ event.description|truncatewords:25 }}
+      </p>
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-sm" style="background-color: #B3C8CF; color: #89A8B2;">📅</span>
+          <span style="color: #5a6c7d;">{{ event.start_datetime|date:"d/m/Y, H:i" }}</span>
         </div>
-        <div class="card-actions justify-end mt-4">
-          <a href="{{ event.get_absolute_url }}" class="btn" style="background-color: #89A8B2; color: #F1F0E8;">
-            ดูรายละเอียด
-          </a>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-sm" style="background-color: #E5E1DA; color: #89A8B2;">📍</span>
+          <span style="color: #5a6c7d;">{{ event.location }}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-sm" style="background-color: #E5E1DA; color: #2C3E50;">🎟️</span>
+          <span style="color: #5a6c7d;">
+            {{ event.confirmed_participants_count }} / {{ event.max_participants }} ที่นั่ง
+            {% if event.is_full %}
+            <span class="badge badge-error badge-xs ml-2 text-white">เต็มแล้ว</span>
+            {% endif %}
+          </span>
         </div>
       </div>
-    </article>
-  {% empty %}
-      <div class="items-center">
-        <p>ยังไม่มีกิจกรรมในขณะนี้</p>
+      <div class="card-actions justify-end">
+        <a href="{{ event.get_absolute_url }}" class="btn btn-sm" style="background-color: #89A8B2; color: #F1F0E8;"
+          x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
+          x-transition:enter-end="opacity-100 scale-100">
+          ดูรายละเอียด
+        </a>
       </div>
     </div>
+  </article>
+  {% empty %}
+  <div class="col-span-full flex flex-col items-center justify-center py-16">
+    <div class="text-6xl mb-4 opacity-30">📅</div>
+    <h3 class="text-xl font-semibold mb-2" style="color: #2C3E50;">ยังไม่มีกิจกรรม</h3>
+    <p class="text-gray-600 mb-6">ยังไม่มีกิจกรรมในขณะนี้</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'events:event_create' %}" class="btn btn-primary">
+      สร้างกิจกรรมแรก
+    </a>
+    {% endif %}
+  </div>
   {% endfor %}
 </div>
 {% endblock %}

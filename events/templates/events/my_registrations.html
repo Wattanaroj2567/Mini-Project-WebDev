@@ -3,217 +3,72 @@
 {% block title %}กิจกรรมที่ฉันลงทะเบียน | EventRegis+{% endblock %}
 
 {% block content %}
-<style>
-  #content-wrapper {
-    background-color: #F1F0E8;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  
-  .registrations-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .page-header {
-    margin-bottom: 2.5rem;
-  }
-  
-  .page-title {
-    color: #2C3E50;
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-  
-  .page-subtitle {
-    color: #7f8c8d;
-    font-size: 1rem;
-  }
-  
-  .table-wrapper {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    overflow-x: auto;
-  }
-  
-  .events-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .events-table thead {
-    background: #F8F9FA;
-  }
-  
-  .events-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #2C3E50;
-    border-bottom: 2px solid #E0E0E0;
-    white-space: nowrap;
-  }
-  
-  .events-table td {
-    padding: 1rem;
-    color: #5a6c7d;
-    border-bottom: 1px solid #F0F0F0;
-  }
-  
-  .events-table tbody tr {
-    transition: background-color 0.2s ease;
-  }
-  
-  .events-table tbody tr:hover {
-    background-color: #F8F9FA;
-  }
-  
-  .event-link {
-    color: #89A8B2;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-  
-  .event-link:hover {
-    color: #7A99A3;
-    text-decoration: underline;
-  }
-  
-  .status-badge {
-    display: inline-block;
-    padding: 0.375rem 0.875rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-  
-  .status-confirmed {
-    background: #D4EDDA;
-    color: #155724;
-  }
-  
-  .status-pending {
-    background: #FFF3CD;
-    color: #856404;
-  }
-  
-  .status-cancelled {
-    background: #F8D7DA;
-    color: #721C24;
-  }
-  
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-  }
-  
-  .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    opacity: 0.3;
-  }
-  
-  .empty-title {
-    color: #2C3E50;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-  
-  .empty-text {
-    color: #7f8c8d;
-    margin-bottom: 1.5rem;
-  }
-  
-  .btn-browse {
-    background: #89A8B2;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease;
-  }
-  
-  .btn-browse:hover {
-    background: #7A99A3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(137, 168, 178, 0.3);
-  }
-  
-  @media (max-width: 768px) {
-    .page-title {
-      font-size: 1.5rem;
-    }
-    
-    .table-wrapper {
-      padding: 1rem;
-    }
-    
-    .events-table th,
-    .events-table td {
-      padding: 0.75rem 0.5rem;
-      font-size: 0.875rem;
-    }
-    
-    .events-table th:nth-child(3),
-    .events-table td:nth-child(3) {
-      display: none;
-    }
-  }
-</style>
-
-<div id="content-wrapper">
-  <div class="registrations-container">
-    <div class="page-header">
-      <h1 class="page-title">กิจกรรมที่ฉันลงทะเบียน</h1>
-      <p class="page-subtitle">ติดตามกิจกรรมที่คุณได้ลงทะเบียนไว้</p>
+<div class="min-h-screen p-8" style="background-color: #F1F0E8;">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-10">
+      <h1 class="text-3xl md:text-4xl font-bold mb-2" style="color: #2C3E50;">กิจกรรมที่ฉันลงทะเบียน</h1>
+      <p class="text-gray-600">ติดตามกิจกรรมที่คุณได้ลงทะเบียนไว้</p>
     </div>
 
     {% if registrations %}
-    <div class="table-wrapper">
-      <table class="events-table">
-        <thead>
-          <tr>
-            <th>ชื่อกิจกรรม</th>
-            <th>วันที่</th>
-            <th>สถานที่</th>
-            <th>สถานะ</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for registration in registrations %}
-          <tr>
-            <td>
-              <a href="{{ registration.event.get_absolute_url }}" class="event-link">
-                {{ registration.event.title }}
-              </a>
-            </td>
-            <td>{{ registration.event.start_datetime|date:"d M Y, H:i" }}</td>
-            <td>{{ registration.event.location }}</td>
-            <td>
-              <span class="status-badge status-{{ registration.status|lower }}">
-                {{ registration.status }}
-              </span>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="card bg-white shadow-lg rounded-2xl">
+      <div class="card-body p-6">
+        <div class="overflow-x-auto">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="text-left font-semibold" style="color: #2C3E50;">ชื่อกิจกรรม</th>
+                <th class="text-left font-semibold" style="color: #2C3E50;">วันที่</th>
+                <th class="text-left font-semibold hidden md:table-cell" style="color: #2C3E50;">สถานที่</th>
+                <th class="text-left font-semibold" style="color: #2C3E50;">สถานะ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for registration in registrations %}
+              <tr class="hover:bg-gray-50 transition-colors duration-200">
+                <td>
+                  <a href="{{ registration.event.get_absolute_url }}" class="link link-hover font-semibold"
+                    style="color: #89A8B2;">
+                    {{ registration.event.title }}
+                  </a>
+                </td>
+                <td class="text-sm" style="color: #5a6c7d;">
+                  {{ registration.event.start_datetime|date:"d M Y, H:i" }}
+                </td>
+                <td class="text-sm hidden md:table-cell" style="color: #5a6c7d;">
+                  {{ registration.event.location }}
+                </td>
+                <td>
+                  <span class="badge badge-sm
+                    {% if registration.status == 'Confirmed' %}badge-success
+                    {% elif registration.status == 'Pending' %}badge-warning
+                    {% elif registration.status == 'Cancelled' %}badge-error
+                    {% else %}badge-neutral
+                    {% endif %}">
+                    {{ registration.get_status_display }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
     {% else %}
-    <div class="table-wrapper">
-      <div class="empty-state">
-        <div class="empty-icon">🎟️</div>
-        <h2 class="empty-title">ยังไม่มีการลงทะเบียน</h2>
-        <p class="empty-text">คุณยังไม่ได้ลงทะเบียนกิจกรรมใดๆ เริ่มค้นหากิจกรรมที่น่าสนใจได้เลย!</p>
-        <a href="{% url 'events:event_list' %}" class="btn-browse">เรียกดูกิจกรรม</a>
+    <div class="card bg-white shadow-lg rounded-2xl">
+      <div class="card-body">
+        <div class="flex flex-col items-center justify-center py-16">
+          <div class="text-6xl mb-4 opacity-30">🎟️</div>
+          <h2 class="text-2xl font-semibold mb-2" style="color: #2C3E50;">ยังไม่มีการลงทะเบียน</h2>
+          <p class="text-gray-600 mb-6 text-center max-w-md">
+            คุณยังไม่ได้ลงทะเบียนกิจกรรมใดๆ เริ่มค้นหากิจกรรมที่น่าสนใจได้เลย!
+          </p>
+          <a href="{% url 'events:event_list' %}"
+            class="btn btn-primary btn-lg hover:bg-blue-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+            เรียกดูกิจกรรม
+          </a>
+        </div>
       </div>
     </div>
     {% endif %}

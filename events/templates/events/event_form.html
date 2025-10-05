@@ -1,226 +1,174 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}สร้างกิจกรรมใหม่ | EventRegis+{% endblock %}
+{% block title %}
+{% if form.instance.pk %}แก้ไขกิจกรรม | EventRegis+{% else %}สร้างกิจกรรมใหม่ | EventRegis+{% endif %}
+{% endblock %}
 
 {% block content %}
-<style>
-  #content-wrapper {
-    background-color: #F1F0E8;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  
-  .create-container {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-  
-  .create-card {
-    background: white;
-    border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .page-title {
-    color: #2C3E50;
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
-  }
-  
-  .form-group {
-    margin-bottom: 1.75rem;
-  }
-  
-  .form-label {
-    display: block;
-    color: #2C3E50;
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-  }
-  
-  .form-input,
-  .form-textarea,
-  .form-select {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    background: #F1F0E8;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: #2C3E50;
-    transition: all 0.3s ease;
-    font-family: inherit;
-  }
-  
-  .form-textarea {
-    min-height: 120px;
-    resize: vertical;
-  }
-  
-  .form-input:focus,
-  .form-textarea:focus,
-  .form-select:focus {
-    outline: none;
-    border-color: #89A8B2;
-    background: white;
-  }
-  
-  .form-input::placeholder,
-  .form-textarea::placeholder {
-    color: #95a5a6;
-  }
-  
-  .helper-text {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #7f8c8d;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-  }
-  
-  .submit-btn {
-    width: 100%;
-    padding: 1rem;
-    background: #5B4FDB;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 1rem;
-  }
-  
-  .submit-btn:hover {
-    background: #4A3FC7;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(91, 79, 219, 0.3);
-  }
-  
-  .error-message {
-    color: #e74c3c;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-  }
-  
-  .input-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  
-  @media (max-width: 640px) {
-    .input-group {
-      grid-template-columns: 1fr;
-    }
-    
-    .create-card {
-      padding: 1.5rem;
-    }
-  }
-</style>
+<div class="min-h-screen p-8" style="background-color: #F1F0E8;">
+  <div class="max-w-3xl mx-auto">
+    <div class="card bg-white shadow-lg rounded-2xl">
+      <div class="card-body p-10">
+        <h1 class="text-2xl md:text-3xl font-semibold mb-8" style="color: #2C3E50;">
+          {% if form.instance.pk %}
+          แก้ไขกิจกรรม
+          {% else %}
+          สร้างกิจกรรมใหม่
+          {% endif %}
+        </h1>
 
-<div id="content-wrapper">
-  <div class="create-container">
-    <div class="create-card">
-      <h1 class="page-title">สร้างกิจกรรมใหม่</h1>
-      
-  <form method="post" action="{% url 'events:event_create' %}">
-        {% csrf_token %}
-        
-        <!-- Title Field -->
-        <div class="form-group">
-          <label class="form-label" for="id_title">Title:</label>
-          <input 
-            type="text" 
-            name="title" 
-            id="id_title"
-            class="form-input" 
-            placeholder="ชื่อกิจกรรม"
-            required
-            value="{{ form.title.value|default:'' }}"
-          />
-          {% if form.title.errors %}
-            <div class="error-message">{{ form.title.errors.0 }}</div>
-          {% endif %}
-        </div>
-        
-        <!-- Description Field -->
-        <div class="form-group">
-          <label class="form-label" for="id_description">Description:</label>
-          <textarea 
-            name="description" 
-            id="id_description"
-            class="form-textarea" 
-            placeholder="✍️ รายละเอียดกิจกรรม"
-          >{{ form.description.value|default:'' }}</textarea>
-          {% if form.description.errors %}
-            <div class="error-message">{{ form.description.errors.0 }}</div>
-          {% endif %}
-        </div>
-        
-        <!-- Start Datetime Field -->
-        <div class="form-group">
-          <label class="form-label" for="id_start_datetime">Start datetime:</label>
-          <input 
-            type="datetime-local" 
-            name="start_datetime" 
-            id="id_start_datetime"
-            class="form-input" 
-            placeholder="วันและเวลาที่เริ่มกิจกรรม"
-            required
-            value="{{ form.start_datetime.value|default:'' }}"
-          />
-          {% if form.start_datetime.errors %}
-            <div class="error-message">{{ form.start_datetime.errors.0 }}</div>
-          {% endif %}
-        </div>
-        
-        <!-- Location Field -->
-        <div class="form-group">
-          <label class="form-label" for="id_location">Location:</label>
-          <input 
-            type="text" 
-            name="location" 
-            id="id_location"
-            class="form-input" 
-            placeholder="สถานที่จัดกิจกรรม"
-            required
-            value="{{ form.location.value|default:'' }}"
-          />
-          {% if form.location.errors %}
-            <div class="error-message">{{ form.location.errors.0 }}</div>
-          {% endif %}
-        </div>
-        
-        <!-- Max Participants Field -->
-        <div class="form-group">
-          <label class="form-label" for="id_max_participants">Max participants:</label>
-          <input 
-            type="number" 
-            name="max_participants" 
-            id="id_max_participants"
-            class="form-input" 
-            placeholder="100"
-            min="1"
-            required
-            value="{{ form.max_participants.value|default:'' }}"
-          />
-          <div class="helper-text">
-            <span>จำนวนผู้เข้าร่วมสูงสุด</span>
+        <form method="post" x-data="{ submitting: false }" @submit="submitting = true">
+          {% csrf_token %}
+
+          <!-- Title Field -->
+          <div class="form-control mb-7">
+            <label class="label" for="id_title">
+              <span class="label-text font-medium" style="color: #2C3E50;">ชื่อกิจกรรม</span>
+            </label>
+            <input type="text" name="title" id="id_title"
+              class="input input-bordered w-full focus:input-primary transition-all duration-300"
+              style="background-color: #F1F0E8; border-color: transparent;" placeholder="ชื่อกิจกรรม" required
+              value="{{ form.title.value|default:'' }}" />
+            {% if form.title.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.title.errors.0 }}</span>
+            </label>
+            {% endif %}
           </div>
-          {% if form.max_participants.errors %}
-            <div class="error-message">{{ form.max_participants.errors.0 }}</div>
-          {% endif %}
-        </div>
-        
-        <button type="submit" class="submit-btn">สร้างกิจกรรม</button>
-      </form>
+
+          <!-- Description Field -->
+          <div class="form-control mb-7">
+            <label class="label" for="id_description">
+              <span class="label-text font-medium" style="color: #2C3E50;">รายละเอียดกิจกรรม</span>
+            </label>
+            <textarea name="description" id="id_description"
+              class="textarea textarea-bordered w-full h-32 focus:textarea-primary transition-all duration-300 resize-y"
+              style="background-color: #F1F0E8; border-color: transparent;"
+              placeholder="✍️ รายละเอียดกิจกรรม">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.description.errors.0 }}</span>
+            </label>
+            {% endif %}
+          </div>
+
+          <!-- Start Datetime Field -->
+          <div class="form-control mb-7">
+            <label class="label" for="id_start_datetime">
+              <span class="label-text font-medium" style="color: #2C3E50;">วันและเวลาที่เริ่มกิจกรรม</span>
+            </label>
+            <input type="datetime-local" name="start_datetime" id="id_start_datetime"
+              class="input input-bordered w-full focus:input-primary transition-all duration-300"
+              style="background-color: #F1F0E8; border-color: transparent;" placeholder="วันและเวลาที่เริ่มกิจกรรม"
+              required value="{{ form.start_datetime.value|default:''|date:'Y-m-d\\TH:i' }}" />
+            {% if form.start_datetime.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.start_datetime.errors.0 }}</span>
+            </label>
+            {% endif %}
+          </div>
+
+          <!-- Location Field -->
+          <div class="form-control mb-7">
+            <label class="label" for="id_location">
+              <span class="label-text font-medium" style="color: #2C3E50;">สถานที่จัดกิจกรรม</span>
+            </label>
+            <input type="text" name="location" id="id_location"
+              class="input input-bordered w-full focus:input-primary transition-all duration-300"
+              style="background-color: #F1F0E8; border-color: transparent;" placeholder="สถานที่จัดกิจกรรม" required
+              value="{{ form.location.value|default:'' }}" />
+            {% if form.location.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.location.errors.0 }}</span>
+            </label>
+            {% endif %}
+          </div>
+
+          <!-- Max Participants Field -->
+          <div class="form-control mb-7">
+            <label class="label" for="id_max_participants">
+              <span class="label-text font-medium" style="color: #2C3E50;">จำนวนผู้เข้าร่วมสูงสุด</span>
+            </label>
+            <input type="number" name="max_participants" id="id_max_participants"
+              class="input input-bordered w-full focus:input-primary transition-all duration-300"
+              style="background-color: #F1F0E8; border-color: transparent;" placeholder="100" min="1" required
+              value="{{ form.max_participants.value|default:'' }}" />
+            <label class="label">
+              <span class="label-text-alt text-gray-500">กำหนดจำนวนผู้เข้าร่วมทั้งหมดที่รองรับได้</span>
+            </label>
+            {% if form.max_participants.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.max_participants.errors.0 }}</span>
+            </label>
+            {% endif %}
+          </div>
+
+          <!-- Category Field -->
+          <div class="form-control mb-8">
+            <label class="label" for="id_category">
+              <span class="label-text font-medium" style="color: #2C3E50;">หมวดหมู่กิจกรรม</span>
+            </label>
+            <select name="category" id="id_category"
+              class="select select-bordered w-full focus:select-primary transition-all duration-300"
+              style="background-color: #F1F0E8; border-color: transparent;">
+              {% for value, label in form.fields.category.choices %}
+              <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            {% if form.category.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.category.errors.0 }}</span>
+            </label>
+            {% endif %}
+          </div>
+
+          <!-- Allowed Gender Field -->
+          <div class="form-control mb-8">
+            <span class="label-text font-medium" style="color: #2C3E50;">เพศที่อนุญาตให้เข้าร่วม</span>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:gap-6 mt-3 space-y-3 sm:space-y-0">
+              <label class="label cursor-pointer justify-start gap-3" for="id_allow_male">
+                <input type="checkbox" name="allow_male" id="id_allow_male" class="checkbox checkbox-primary" {% if form.allow_male.value %}checked{% endif %}>
+                <span class="label-text" style="color: #2C3E50;">ชาย</span>
+              </label>
+              <label class="label cursor-pointer justify-start gap-3" for="id_allow_female">
+                <input type="checkbox" name="allow_female" id="id_allow_female" class="checkbox checkbox-primary" {% if form.allow_female.value %}checked{% endif %}>
+                <span class="label-text" style="color: #2C3E50;">หญิง</span>
+              </label>
+            </div>
+            {% if form.allow_male.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.allow_male.errors.0 }}</span>
+            </label>
+            {% endif %}
+            {% if form.allow_female.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.allow_female.errors.0 }}</span>
+            </label>
+            {% endif %}
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            {% if form.instance.pk %}
+            <a href="{% url 'events:event_detail' form.instance.pk %}"
+              class="btn btn-outline flex-1 text-gray-700 border-gray-300 hover:bg-gray-100 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+              ยกเลิก
+            </a>
+            {% else %}
+            <a href="{% url 'events:event_list' %}"
+              class="btn btn-outline flex-1 text-gray-700 border-gray-300 hover:bg-gray-100 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+              ยกเลิก
+            </a>
+            {% endif %}
+
+            <button type="submit"
+              class="btn btn-primary flex-1 text-white text-lg font-semibold hover:bg-indigo-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+              :class="{ 'loading': submitting }">
+              <span x-show="!submitting">{% if form.instance.pk %}บันทึกการแก้ไข{% else %}สร้างกิจกรรม{% endif %}</span>
+              <span x-show="submitting">กำลังดำเนินการ...</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>

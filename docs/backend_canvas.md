@@ -3,6 +3,8 @@
 ## พื้นฐานระบบ
 - **App หลัก**: `events`
 - **โมเดลสำคัญ**: `Event`, `Registration`
+  - `Event` เก็บรายละเอียดกิจกรรมพร้อมฟิลด์ `category` (เลือกจากตัวเลือกที่ระบบเตรียมไว้)
+  - `Registration` บันทึกสถานะการลงทะเบียน (Confirmed/Pending/Cancelled)
 - **การยืนยันตัวตน**: Django Allauth (OAuth Google + Username/Password)
 - **สิทธิ์ (Mixins/Decorators)**: `LoginRequiredMixin`, `UserPassesTestMixin`, `login_required`
 - **ข้อความตอบกลับ**: Django messages framework (success/info/error)
@@ -28,6 +30,7 @@
 - **สิทธิ์**: ต้องล็อกอิน
 - **หน้าที่**: สร้างกิจกรรมใหม่จากฟอร์มมาตรฐาน
 - **Template**: `events/event_form.html`
+- **ฟิลด์ในฟอร์ม**: title, description, start_datetime, location, max_participants, category
 - **ตรรกะเพิ่มเติม**: กำหนด `form.instance.organizer` เป็นผู้ใช้ปัจจุบัน และแสดง `messages.success`
 
 ## Path: `/<int:pk>/update/` → `events:event_update`
@@ -49,16 +52,17 @@
 - **สิทธิ์**: ผู้ใช้ที่ล็อกอินเท่านั้น
 - **หน้าที่**: ลงทะเบียนผู้ใช้เข้าร่วมกิจกรรม
 - **ตรรกะสำคัญ**:
-  - ตรวจว่าเคยลงทะเบียนไว้แล้วหรือไม่ ถ้ามีให้เตือนด้วย `messages.info`
-  - ตรวจจำนวนผู้ลงทะเบียนปัจจุบันกับ `max_participants` ป้องกันการเกินโควต้า (ยิง `messages.error` เมื่อเต็ม)
-  - สร้าง `Registration` ใหม่และส่ง `messages.success`
+  - หากพบ `Registration` ที่สถานะยังเป็น Confirmed จะแจ้งเตือนว่าลงทะเบียนแล้ว
+  - หากพบรายการเดิมที่ถูกยกเลิก จะลองเปิดสถานะกลับเป็น Confirmed เมื่อยังมีที่นั่งว่าง
+  - ตรวจสอบโควตาด้วยจำนวนผู้ยืนยัน (Confirmed) เท่านั้น หากเต็มจะปฏิเสธด้วย `messages.error`
+  - เมื่อสำเร็จจะตั้งสถานะเป็น Confirmed และยิง `messages.success`
 - **Redirect**: กลับไปหน้ารายละเอียดกิจกรรม
 
 ## Path: `/<int:pk>/unregister/` → `events:event_unregister`
 - **View**: ฟังก์ชัน `event_unregister` + `login_required`
 - **สิทธิ์**: ผู้ใช้ที่ล็อกอินเท่านั้น
 - **หน้าที่**: ยกเลิกการลงทะเบียนของผู้ใช้ปัจจุบัน
-- **ตรรกะ**: ลบ `Registration` ตรงกับ user/event และส่ง `messages.success`
+- **ตรรกะ**: เปลี่ยนสถานะเป็น Cancelled (ไม่ลบข้อมูล) และส่ง `messages.success`
 - **Redirect**: กลับไปหน้ารายละเอียดกิจกรรม
 
 ## Path: `/my-events/` → `events:my_organized_events`
@@ -79,8 +83,9 @@
 
 ## Backend Validation & Messaging Checklist
 - ป้องกัน duplicate registration ด้วยการตรวจ `Registration` ก่อนสร้าง
-- ป้องกันการสมัครเกินจำนวนด้วยการเช็ก `event.registrations.count()` เทียบ `max_participants`
+- ป้องกันการสมัครเกินจำนวนด้วยการเช็กจำนวนผู้ที่มีสถานะ Confirmed เทียบ `max_participants`
 - ทุก action ที่เปลี่ยนข้อมูล (Create/Update/Delete/Register/Unregister) ส่งข้อความผ่าน Django messages ให้ UI แสดงผล
+- การยกเลิกจะเปลี่ยนสถานะเป็น Cancelled เพื่อเก็บประวัติและเปิดโอกาสให้กลับมาลงทะเบียนอีกครั้ง
 - สิทธิ์ organizer ถูกบังคับผ่าน `OrganizerRequiredMixin`
 - เทมเพลต override ของ allauth อยู่ใน `events/templates/account` (แก้ชื่อโฟลเดอร์แล้ว)
 

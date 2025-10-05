@@ -19,8 +19,8 @@ urlpatterns = [
     # หน้าแก้ไขกิจกรรม
     path('<int:pk>/update/', views.EventUpdateView.as_view(), name='event_update'),
 
-    # หน้าลบกิจกรรม
-    path('<int:pk>/delete/', views.EventDeleteView.as_view(), name='event_delete'),
+    # ลบกิจกรรม (POST เท่านั้น)
+    path('<int:pk>/delete/', views.event_delete, name='event_delete'),
 
     # URL สำหรับจัดการการลงทะเบียน
     path('<int:pk>/register/', views.event_register, name='event_register'),
@@ -31,4 +31,5 @@ urlpatterns = [
          name='my_organized_events'),
     path('my-registrations/', views.MyRegistrationsView.as_view(),
          name='my_registrations'),
+
 ]
