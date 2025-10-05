@@ -1,40 +1,191 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}| EventRegis+{% endblock %}  
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="card lg:card-side bg-base-100 shadow-xl">
-        <div class="card-body">
-            <h1 class="card-title text-4xl font-bold">{{ event.title }}</h1>
-            <p class="mt-4 text-lg">{{ event.description }}</p>
+<style>
+  #content-wrapper {
+    background-color: #F1F0E8;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  
+  .detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .detail-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .event-title {
+    color: #2C3E50;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+  
+  .event-description {
+    color: #5a6c7d;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    white-space: pre-wrap;
+  }
+  
+  .info-section {
+    margin-bottom: 2.5rem;
+  }
+  
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: #2C3E50;
+  }
+  
+  .info-label {
+    font-weight: 600;
+    min-width: 120px;
+  }
+  
+  .info-value {
+    color: #5a6c7d;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+  
+  .detail-card .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .detail-card .btn-edit {
+    background: #FFC107;
+    color: #2C3E50;
+  }
+  
+  .detail-card .btn-edit:hover {
+    background: #FFB300;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+  }
+  
+  .detail-card .btn-delete {
+    background: #E91E63;
+    color: white;
+  }
+  
+  .detail-card .btn-delete:hover {
+    background: #C2185B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  }
+  
+  @media (max-width: 640px) {
+    .detail-card {
+      padding: 1.5rem;
+    }
+    
+    .event-title {
+      font-size: 1.5rem;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+    }
+    
+    .detail-card .btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
 
-            <div class="mt-6 space-y-2">
-                <p><strong>ผู้จัด:</strong> {{ event.organizer.username }}</p>
-                <p><strong>วันที่และเวลา:</strong> {{ event.start_datetime|date:"d M Y, H:i" }}</p>
-                <p><strong>สถานที่:</strong> {{ event.location }}</p>
-                <p><strong>รับสมัครสูงสุด:</strong> {{ event.max_participants }} คน</p>
-            </div>
-
-            <div class="card-actions justify-end mt-8">
-                {% if user.is_authenticated %}
-                {% if user == event.organizer %}
-                <!-- ถ้าเป็นเจ้าของกิจกรรม -->
-                <a href="{% url 'events:event_update' event.pk %}" class="btn btn-warning">แก้ไขกิจกรรม</a>
-                <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-error">ลบกิจกรรม</a>
-                {% else %}
-                <!-- ถ้าเป็นผู้ใช้ทั่วไป -->
-                {% if is_registered %}
-                <a href="{% url 'events:event_unregister' event.pk %}"
-                    class="btn btn-outline btn-error">ยกเลิกการลงทะเบียน</a>
-                {% else %}
-                <a href="{% url 'events:event_register' event.pk %}" class="btn btn-primary">ลงทะเบียนเลย</a>
-                {% endif %}
-                {% endif %}
-                {% else %}
-                <!-- ถ้ายังไม่ล็อกอิน -->
-                <a href="{% url 'account_login' %}" class="btn btn-primary">เข้าสู่ระบบเพื่อลงทะเบียน</a>
-                {% endif %}
-            </div>
+<div id="content-wrapper">
+  <div class="detail-container">
+    <div class="detail-card">
+      <h1 class="event-title">{{ event.title }}</h1>
+      
+      <p class="event-description">{{ event.description }}</p>
+      
+      <div class="info-section">
+        <div class="info-item">
+          <span class="info-label">ผู้จัด:</span>
+          <span class="info-value">{{ event.organizer }}</span>
         </div>
+        
+        <div class="info-item">
+          <span class="info-label">วันที่และเวลา:</span>
+          <span class="info-value">{{ event.start_datetime|date:"d M Y, H:i" }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">สถานที่:</span>
+          <span class="info-value">{{ event.location }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">จำนวนผู้สมัคร:</span>
+          <span class="info-value">{{ event.current_participants }} คน</span>
+        </div>
+      </div>
+      
+      {% if user == event.organizer %}
+      <div class="action-buttons">
+        <a href="{% url 'events:event_update' event.id %}" class="btn btn-edit">แก้ไขกิจกรรม</a>
+        <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-delete">ลบกิจกรรม</a>
+      </div>
+      {% endif %}
     </div>
+  </div>
+</div>
+<div class="event-card">
+    <h2>{{ event.title }}</h2>
+    <p>{{ event.description }}</p>
+    <p><strong>ผู้จัด:</strong> {{ event.organizer.username }}</p>
+    <p><strong>วันที่:</strong> {{ event.date|date:"d M Y, H:i" }}</p>
+    <p><strong>สถานที่:</strong> {{ event.location }}</p>
+    <p><strong>จำนวนผู้เข้าร่วม:</strong> 
+        {{ event.registrations.count }} / {{ event.max_participants }} คน
+    </p>
+
+    {% if user.is_authenticated %}
+        {% if is_registered %}
+            <!-- ปุ่มยกเลิกการลงทะเบียน -->
+            <form method="post" action="{% url 'events:event_unregister' event.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">ยกเลิกการเข้าร่วม</button>
+            </form>
+        {% else %}
+            <!-- ปุ่มลงทะเบียน -->
+            {% if event.registrations.count < event.max_participants %}
+                <form method="post" action="{% url 'events:event_register' event.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">เข้าร่วมกิจกรรม</button>
+                </form>
+            {% else %}
+                <p class="text-danger">กิจกรรมเต็มแล้ว</p>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <p><a href="{% url 'login' %}">เข้าสู่ระบบ</a> เพื่อเข้าร่วมกิจกรรม</p>
+    {% endif %}
 </div>
 {% endblock %}

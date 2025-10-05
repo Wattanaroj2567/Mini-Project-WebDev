@@ -1,16 +1,116 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}ยืนยันการลบ | EventRegis+{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl text-center">
-    <h1 class="text-2xl font-bold mb-4">ยืนยันการลบ</h1>
-    <p class="mb-6">คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรม "{{ object.title }}"?</p>
+<style>
+  /* Make the wrapper a full-viewport overlay so the confirm card is centered above everything */
+  #content-wrapper {
+    position: fixed;
+    inset: 0; /* top:0; right:0; bottom:0; left:0 */
+    background: rgba(0,0,0,0.04); /* subtle backdrop */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    z-index: 9999; /* sit above navbar */
+  }
+  
+  .confirm-container {
+    width: 100%;
+    max-width: 480px;
+  }
+  
+  .confirm-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .confirm-title {
+    color: #2C3E50;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .confirm-message {
+    color: #5a6c7d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  
+  .event-name {
+    color: #2C3E50;
+    font-weight: 600;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .btn-delete {
+    background: #E91E63;
+    color: white;
+  }
+  
+  .btn-delete:hover {
+    background: #C2185B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  }
+  
+  .btn-cancel {
+    background: #E0E0E0;
+    color: #2C3E50;
+  }
+  
+  .btn-cancel:hover {
+    background: #D0D0D0;
+  }
+  
+  @media (max-width: 640px) {
+    .button-group {
+      flex-direction: column;
+    }
+  }
+</style>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="flex justify-center gap-4">
-            <button type="submit" class="btn btn-error">ใช่, ลบเลย</button>
-            <a href="{{ object.get_absolute_url }}" class="btn">ยกเลิก</a>
-        </div>
-    </form>
+<div id="content-wrapper">
+  <div class="confirm-container">
+    <div class="confirm-card">
+      <h1 class="confirm-title">ยืนยันการลบ</h1>
+      
+      <p class="confirm-message">
+        คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรม 
+        <span class="event-name">"{{ event.title }}"</span>?
+      </p>
+      
+      <div class="button-group">
+        <form method="post" action="{% url 'events:event_delete' event.id %}" style="flex: 1;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-delete">ใช่, ลบเลย</button>
+        </form>
+        <a href="{% url 'events:event_detail' event.id %}" class="btn btn-cancel">ยกเลิก</a>
+      </div>
+    </div>
+  </div>
 </div>
+
 {% endblock %}

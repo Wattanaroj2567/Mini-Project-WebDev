@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* Custom Color Palette */
+@theme {
+  --color-sage-blue: #89A8B2;
+  --color-sage-blue-light: #B3C8CF;
+  --color-cream: #E5E1DA;
+  --color-cream-light: #F1F0E8;
+}
+
+
+
 /**
   * A catch-all path to Django template files, JavaScript, and Python files
   * that contain Tailwind CSS classes and will be scanned by Tailwind to generate the final CSS file.

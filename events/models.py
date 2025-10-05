@@ -51,3 +51,14 @@ class Registration(models.Model):
 
     def __str__(self):
         return f'{self.user.username} registered for {self.event.title}'
+
+class EventParticipant(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='participants')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    joined_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('event', 'user')  # ป้องกันการเข้าร่วมซ้ำ
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.event.title}"

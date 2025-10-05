@@ -1,17 +1,123 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}ออกจากระบบ | EventRegis+{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-20 p-8 bg-base-100 rounded-lg shadow-xl text-center">
-    <h1 class="text-2xl font-bold mb-4">ออกจากระบบ</h1>
+<style>
+  .content-section {
+    background-color: #F1F0E8;
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  
+  .logout-container {
+    width: 100%;
+    max-width: 480px;
+  }
+  
+  .logout-card {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .logout-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .logout-title {
+    color: #2C3E50;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .logout-message {
+    color: #5a6c7d;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+  }
+  
+  .btn-logout {
+    background: #E91E63;
+    color: white;
+  }
+  
+  .btn-logout:hover {
+    background: #C2185B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  }
+  
+  .btn-cancel {
+    background: #E0E0E0;
+    color: #2C3E50;
+  }
+  
+  .btn-cancel:hover {
+    background: #D0D0D0;
+  }
+  
+  @media (max-width: 640px) {
+    .logout-card {
+      padding: 2rem 1.5rem;
+    }
+    
+    .logout-title {
+      font-size: 1.5rem;
+    }
+    
+    .button-group {
+      flex-direction: column;
+    }
+  }
+</style>
 
-    <p class="mb-6">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?</p>
-
-    <form method="post" action="{% url 'account_logout' %}">
+<div class="content-section">
+  <div class="logout-container">
+    <div class="logout-card">
+      
+      <h1 class="logout-title">ออกจากระบบ</h1>
+      
+      <p class="logout-message">
+        คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?
+      </p>
+      
+      <form method="post" action="{% url 'account_logout' %}">
         {% csrf_token %}
-        <div class="flex justify-center gap-4">
-            <button type="submit" class="btn btn-error">ใช่, ออกจากระบบ</button>
-            <a href="/" class="btn">ยกเลิก</a>
+        <div class="button-group">
+          <button type="submit" class="btn btn-logout">ใช่, ออกจากระบบ</button>
+          <a href="/" class="btn btn-cancel">ยกเลิก</a>
         </div>
-    </form>
+      </form>
+    </div>
+  </div>
 </div>
+
 {% endblock %}

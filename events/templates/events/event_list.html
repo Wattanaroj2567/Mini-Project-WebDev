@@ -1,31 +1,55 @@
 {% extends "base.html" %}
+{% block title %}EventRegis+ - หน้าแรก{% endblock %}
+
+{% block hero %}
+<div class="w-full">
+  <div class="card shadow-lg" style="background-color: #89A8B2; color: #F1F0E8;">
+    <div class="card-body">
+      <h1 class="card-title text-2xl md:text-3xl">กิจกรรมทั้งหมด</h1>
+      <p class="opacity-90">สำรวจและลงทะเบียนกิจกรรมที่คุณสนใจ</p>
+      {% if user.is_authenticated %}
+      <div class="card-actions justify-end">
+        <a href="{% url 'events:event_create' %}" class="btn" style="background-color: #B3C8CF; color: #89A8B2;">
+          + สร้างกิจกรรมใหม่
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">กิจกรรมทั้งหมด</h1>
-        {% if user.is_authenticated %}
-        <a href="{% url 'events:event_create' %}" class="btn btn-primary">สร้างกิจกรรมใหม่</a>
-        {% endif %}
-    </div>
-
-    <!-- Grid for event cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for event in events %}
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h2 class="card-title">{{ event.title }}</h2>
-                <p>{{ event.description|truncatewords:20 }}</p>
-                <p><span class="font-bold">วันที่:</span> {{ event.start_datetime|date:"d M Y, H:i" }}</p>
-                <p><span class="font-bold">สถานที่:</span> {{ event.location }}</p>
-                <div class="card-actions justify-end">
-                    <a href="{{ event.get_absolute_url }}" class="btn btn-secondary">ดูรายละเอียด</a>
-                </div>
-            </div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for event in events %}
+    <article class="card shadow hover:shadow-lg transition" style="background-color: #F1F0E8;">
+      <div class="card-body">
+        <h2 class="card-title" style="color: #89A8B2;">{{ event.title }}</h2>
+        <p style="color: #89A8B2;">
+          {{ event.description|truncatewords:25 }}
+        </p>
+        <div class="mt-2 grid gap-2" style="color: #89A8B2;">
+          <div class="flex items-center gap-2">
+            <span class="badge" style="background-color: #B3C8CF; color: #89A8B2;">วันที่</span>
+            <span>{{ event.start_datetime|date:"d M Y, H:i" }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="badge" style="background-color: #E5E1DA; color: #89A8B2;">สถานที่</span>
+            <span>{{ event.location }}</span>
+          </div>
         </div>
-        {% empty %}
-        <p class="col-span-full text-center text-gray-500">ยังไม่มีกิจกรรมในขณะนี้</p>
-        {% endfor %}
+        <div class="card-actions justify-end mt-4">
+          <a href="{{ event.get_absolute_url }}" class="btn" style="background-color: #89A8B2; color: #F1F0E8;">
+            ดูรายละเอียด
+          </a>
+        </div>
+      </div>
+    </article>
+  {% empty %}
+      <div class="items-center">
+        <p>ยังไม่มีกิจกรรมในขณะนี้</p>
+      </div>
     </div>
+  {% endfor %}
 </div>
 {% endblock %}

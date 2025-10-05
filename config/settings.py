@@ -75,6 +75,7 @@ SITE_ID = 1
 TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS = ["127.0.0.1"]
 
+
 # Django Allauth Settings
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -149,6 +150,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'theme' / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -168,3 +172,5 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+# ถ้าใช้ django-allauth
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # เปลี่ยนจาก 'mandatory' เป็น 'none'

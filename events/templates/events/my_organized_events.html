@@ -1,27 +1,228 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}กิจกรรมที่ฉันสร้าง | EventRegis+{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">กิจกรรมที่ฉันสร้าง</h1>
+<style>
+  #content-wrapper {
+    background-color: #F1F0E8;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  
+  .registrations-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .my-events-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .page-header {
+    margin-bottom: 2.5rem;
+  }
+  
+  .page-title {
+    color: #2C3E50;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .page-subtitle {
+    color: #7f8c8d;
+    font-size: 1rem;
+  }
+  
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .event-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+  
+  .event-title {
+    color: #2C3E50;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+  
+  .event-description {
+    color: #5a6c7d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+  }
+  
+  .event-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #E0E0E0;
+  }
+  
+  .event-meta-icon {
+    font-size: 1rem;
+  }
+  
+  .event-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .detail-card.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+  
+ .btn-edit {
+    background: #FFC107;
+    color: #2C3E50;
+  }
+  
+  .btn-edit:hover {
+    background: #FFB300;
+  }
+  
+  .btn-delete {
+    background: #E91E63;
+    color: white;
+  }
+  
+ .btn-delete:hover {
+    background: #C2185B;
+  }
+  
+  .btn-view {
+    background: #89A8B2;
+    color: white;
+    flex: 1;
+  }
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for event in events %}
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h2 class="card-title">{{ event.title }}</h2>
-                <p>{{ event.description|truncatewords:20 }}</p>
-                <p><span class="font-bold">วันที่:</span> {{ event.start_datetime|date:"d M Y, H:i" }}</p>
-                <div class="card-actions justify-end">
-                    <!-- Link to update and delete the event -->
-                    <a href="{% url 'events:event_update' event.pk %}" class="btn btn-sm btn-warning">แก้ไข</a>
-                    <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-sm btn-error">ลบ</a>
-                    <a href="{{ event.get_absolute_url }}" class="btn btn-sm btn-secondary">ดูรายละเอียด</a>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <p class="col-span-full text-center text-gray-500">คุณยังไม่ได้สร้างกิจกรรมใดๆ</p>
-        {% endfor %}
+  .btn-view:hover {
+    background: #7A99A3;
+  }
+  
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+  
+  .empty-title {
+    color: #2C3E50;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .empty-text {
+    color: #7f8c8d;
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn-create {
+    background: #5B4FDB;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .btn-create:hover {
+    background: #4A3FC7;
+  }
+  
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 1.5rem;
+    }
+    
+    .events-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .event-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<div id="content-wrapper">
+  <div class="my-events-container">
+    <div class="page-header">
+      <h1 class="page-title">กิจกรรมที่ฉันสร้าง</h1>
+      <p class="page-subtitle">จัดการและติดตามกิจกรรมของคุณ</p>
     </div>
+
+    <div class="events-grid">
+      {% for event in events %}
+      <div class="event-card">
+        <h2 class="event-title">{{ event.title }}</h2>
+        <p class="event-description">{{ event.description|truncatewords:20 }}</p>
+        
+        <div class="event-meta">
+          <span class="event-meta-icon">📅</span>
+          <span>{{ event.start_datetime|date:"d M Y, H:i" }}</span>
+        </div>
+        
+        <div class="event-actions">
+          <a href="{% url 'events:event_update' event.pk %}" class="btn btn-edit">แก้ไข</a>
+          <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-delete">ลบ</a>
+          <a href="{{ event.get_absolute_url }}" class="btn btn-view">ดูรายละเอียด</a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h2 class="empty-title">ยังไม่มีกิจกรรม</h2>
+        <p class="empty-text">คุณยังไม่ได้สร้างกิจกรรมใดๆ เริ่มสร้างกิจกรรมแรกของคุณได้เลย!</p>
+        <a href="{% url 'events:event_create' %}" class="btn btn-create">+ สร้างกิจกรรมใหม่</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
+
 {% endblock %}

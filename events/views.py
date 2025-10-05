@@ -140,3 +140,4 @@ class MyRegistrationsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # ค้นหาเฉพาะ registration ที่มี user เป็น user ที่ login อยู่
         return Registration.objects.filter(user=self.request.user).order_by('-event__start_datetime')
+
