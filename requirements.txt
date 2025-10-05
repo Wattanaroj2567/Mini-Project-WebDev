@@ -7,9 +7,6 @@ requests  # Dependency for django-allauth Google provider
 PyJWT     # Dependency for token handling in allauth
 cryptography # Dependency for PyJWT
 
-# For managing environment variables (.env file)
-python-dotenv
-
 # For Tailwind CSS integration
 django-tailwind
 
